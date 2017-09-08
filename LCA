@@ -1,0 +1,75 @@
+/*
+Idea is to send back to caller if you find one of the nodes, but when you continue with the recursion always report you didn't find either values.
+The node pointers indicating the one containing teh value will always be up-to-date and will be used for seeing if we should recurse any further. Please note taht we still need to recurse both ways if you want to make this work for duplicates. But I think this may fail for one specific duplicate condition. Not sure which one, like duplicates in teh same subtree.
+
+Example:
+
+             5
+    3                2
+2       4      6      9
+
+In this case, the LCA of 2 and 9 should be 2.
+If we don't accommodate for the 2 in teh right sub-tree of 5, we would pick 5 to be the LCA (which is incorrect).
+*/
+
+PNode FindLCA2(PNode Root, int Value1, int Value2, PNode *Node1, PNode *Node2, bool &HasChild1, bool &HasChild2)
+{
+    // HasChild1 and HasChild2 are updated only if the node is found in a descendant
+    PNode lca = nullptr;
+    bool found1 = false, found2 = false;
+
+    if (Root == nullptr)
+    {
+        return lca;
+    }
+    if (Root->Value == Value1)
+    {
+        *Node1 = Root;
+        found1 = true;
+    }
+    if (Root->Value == Value2)
+    {
+        *Node2 = Root;
+        found2 = true;
+    }
+    if ((found1 == true) && (found2 == true))
+    {
+        // Found LCA - current node
+        lca = Root;
+        HasChild1 = HasChild2 = true;
+    }
+ 
+    if (lca == nullptr)
+    {
+        lca = FindLCA2(Root->Left, Value1, Value2, Node1, Node2, found1, found2);
+        // Should we do the if (found1 && found2) here to accommodate the duplicates
+        // in teh same sub-tree case???
+    }
+    if (lca == nullptr)
+    {
+        lca = FindLCA2(Root->Right, Value1, Value2, Node1, Node2, found1, found2);
+    }
+    if (found1 && found2)
+    {
+        // Even if we found this somewhere else, thedre may be dupes
+        // We need to find LCA, so this one will be the LCA
+        if ((Node1 != nullptr) && (Node2 != nullptr))
+        {
+            // We just found both nodes' common ancestor
+            if (lca == nullptr)
+            {
+                lca = Root;
+            }
+        }
+    }
+    if (HasChild1 == false)
+    {
+        HasChild1 = found1;
+    }
+    if (HasChild2 == false)
+    {
+        HasChild2 = found2;
+    }
+
+    return lca;
+}
