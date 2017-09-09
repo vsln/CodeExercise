@@ -1,0 +1,72 @@
+#include <iostream>
+
+using namespace std;
+
+#define SWAP(a, b) \
+{ \
+    int temp = a; \
+    a = b; \
+    b = temp; \
+}
+
+void AlternateValues(int *InArray, size_t ArraySize)
+{
+    size_t i = 0;
+    // 
+    // For each element in the array, check:
+    // if position is even (0 is even here) and value is negative, OR
+    // if position is odd and value is positive, then
+    //      SWAP CURRENT VALUE WITH NEXT UNTIL THE ABOVE CONDITION IS FALSE
+    // 
+    do {
+        if ((((i % 2) == 0) && (InArray[i] < 0)) ||
+            ((((i % 2) == 1)) && (InArray[i] >= 0)))
+        {
+            size_t j = i;
+            size_t k = 1;
+            while ((((j % 2) == 0) && (InArray[j] < 0)) ||
+                (((j % 2) == 1) && (InArray[j] >= 0)))
+            {
+                if ((j >= ArraySize) || ((j+k) >= ArraySize))
+                {
+                    cout << "ERROR: May not have equal number of +ve and -ve integers?" << endl;
+                    break;
+                }
+                SWAP(InArray[j], InArray[j + k]);
+                k++;
+            }
+        }
+        cout << InArray[i] << " ";
+        i++;
+    } while (i < ArraySize);
+    cout << endl;
+}
+
+int main()
+{
+    // FIrst line in input is test count
+    // Second line is the number of elements in teh array for the first test
+    // Third line is the array elements
+    // Then other tests continue
+    int numTests = 0;
+    cin >> numTests;
+    cin.clear();
+    fflush(stdin);
+    size_t inSize = 0;
+    int *inArray = nullptr;
+    for (int i = 0; i < numTests; i++)
+    {
+        cin >> inSize;
+        cin.clear();
+        fflush(stdin);
+        inArray = new int[inSize];
+        for (size_t j = 0; j < inSize; j++)
+        {
+            cin >> inArray[j];
+        }
+
+        AlternateValues(inArray, inSize);
+    }
+
+    return 0;
+}
