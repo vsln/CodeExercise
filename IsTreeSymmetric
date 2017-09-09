@@ -1,0 +1,104 @@
+// IsTreeSymmetric.cpp : Defines the entry point for the console application.
+//
+
+#include <iostream>
+#include <stdio.h>
+#include <queue>
+
+using namespace std;
+
+typedef struct _Node {
+    int Value;
+    struct _Node *Left;
+    struct _Node *Right;
+} Node, *PNode;
+
+PNode CreateNode(int Value)
+{
+    PNode newNode = new Node;
+    if (newNode == nullptr)
+    {
+        throw "Insufficient memory";
+    }
+    newNode->Value = Value;
+    newNode->Left = nullptr;
+    newNode->Right = nullptr;
+
+    return newNode;
+}
+
+bool IsMirror(PNode LeftRoot, PNode RightRoot)
+{
+    if ((LeftRoot == nullptr && RightRoot != nullptr) ||
+        (RightRoot == nullptr) && (LeftRoot != nullptr))
+    {
+        return false;
+    }
+    if ((LeftRoot == nullptr) && (RightRoot == nullptr))
+    {
+        return true;
+    }
+    if (LeftRoot->Value != RightRoot->Value)
+    {
+        return false;
+    }
+    bool retVal = IsMirror(LeftRoot->Left, RightRoot->Right) && IsMirror(LeftRoot->Right, RightRoot->Left);
+    return retVal;
+}
+
+void BFS(PNode Root)
+{
+    queue<PNode> treeQueue;
+    treeQueue.push(Root);
+    int level = 0;
+
+    while (!treeQueue.empty())
+    {
+        PNode lastNode = treeQueue.front();
+        treeQueue.pop();
+        if (lastNode->Left != nullptr)
+        {
+            treeQueue.push(lastNode->Left);
+        }
+        if (lastNode->Right != nullptr)
+        {
+            treeQueue.push(lastNode->Right);
+        }
+        cout << lastNode->Value << "\t";
+    }
+    cout << endl;
+}
+
+void DFS(PNode root)
+{
+    if (root == nullptr)
+    {
+        return;
+    }
+    DFS(root->Left);
+    cout << root->Value << "\t";
+    DFS(root->Right);
+}
+
+int main()
+{
+    Node *root = CreateNode(5);
+    root->Left = CreateNode(3);
+    root->Right = CreateNode(3);
+    root->Left->Left = CreateNode(2);
+    root->Left->Right = CreateNode(4);
+    root->Right->Left = CreateNode(4);
+    root->Right->Right = CreateNode(6);
+
+    cout << "Breadth first search: " << endl;
+    BFS(root);
+    cout << endl;
+
+    cout << "Depth first search: " << endl;
+    DFS(root);
+    cout << endl;
+
+    cout << "Is Tree Symmetric? \t" << (IsMirror(root, root) ? "true" : "false") << endl;
+
+    return 0;
+}
