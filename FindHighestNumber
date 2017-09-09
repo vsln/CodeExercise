@@ -1,0 +1,85 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+/***************************************************************
+Given an array in such a way that the elements stored in array are in increasing order initially and then after reaching to a peak element , elements stored are in decreasing order. Find the highest element.
+
+Input:
+The first line of input contains an integer T denoting the number of test cases. The first line of each test case consists of an integer n. The next line consists of n spaced integers.
+
+Output:
+Print the highest number in the array.
+
+Constraints:
+1<=T<=100
+1<=n<=200
+1<=a[i]<=105
+
+Example:
+Input:
+2
+11
+1 2 3 4 5 6 5 4 3 2 1
+9
+1 3 4 5 7 8 9 5 2
+
+Output:
+6
+9
+****************************************************************/
+
+int FindHighest(int *InArray, size_t Left, size_t Right)
+{
+    // The array first increases and then decreases
+    // Take the midpoint, compare this to midpoint+1 and midpoint-1
+    // - If midpoint < midpoint + 1, highest is to teh right
+    // - if midpoint > midpoint + 1, highest is to the left
+    int highest = INT_MIN;
+    if (Right - Left == 1)
+    {
+        int highest = (InArray[Right] > InArray[Left]) ? InArray[Right] : InArray[Left];
+        return highest;
+    }
+    size_t midPoint = (Left + Right) / 2;
+    if (InArray[midPoint] <= InArray[midPoint + 1])
+    {
+        highest = FindHighest(InArray, midPoint, Right);
+    }
+    if (InArray[midPoint] >= InArray[midPoint + 1])
+    {
+        highest = FindHighest(InArray, Left, midPoint);
+    }
+    return highest;
+}
+
+int main()
+{
+    // FIrst line in input is test count
+    // Second line is the number of elements in teh array for the first test
+    // Third line is the array elements
+    // Then other tests continue
+    int numTests = 0;
+    cin >> numTests;
+    cin.clear();
+    fflush(stdin);
+    size_t inSize = 0;
+    int *inArray = nullptr;
+    for (int i = 0; i < numTests; i++)
+    {
+        cin >> inSize;
+        cin.clear();
+        fflush(stdin);
+        inArray = new int[inSize];
+        for (size_t j = 0; j < inSize; j++)
+        {
+            cin >> inArray[j];
+        }
+
+        int highest = FindHighest(inArray, 0, inSize);
+        cout << "Highest number: " << highest << endl;
+    }
+
+    return 0;
+}
