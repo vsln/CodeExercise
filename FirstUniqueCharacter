@@ -1,0 +1,52 @@
+// FirstUniqueChar.cpp : Defines the entry point for the console application.
+//
+
+#include <iostream>
+#include <vector>
+#include <wchar.h>
+#include <string>
+#include <map>
+
+using namespace std;
+
+wchar_t FindFirstUnique(wstring InString)
+{
+    vector<wchar_t> insertionOrder;
+    map<wchar_t, int> occurrenceCount;
+
+    for (size_t i = 0; i < InString.length(); i++)
+    {
+        auto it = occurrenceCount.find(InString.at(i));
+        if (it != occurrenceCount.end())
+        {
+            // Character found, just increment the count
+            it->second++;
+        }
+        else
+        {
+            // Character not found. Insert to both map and vector
+            insertionOrder.push_back(InString.at(i));
+            occurrenceCount.insert({ InString.at(i), 1 });
+        }
+    }
+
+    for (auto it = insertionOrder.begin(); it != insertionOrder.end(); ++it)
+    {
+        auto mapIt = occurrenceCount.find(*it);
+        if ((mapIt != occurrenceCount.end()) && (mapIt->second == 1))
+        {
+            return mapIt->first;
+        }
+    }
+
+    return ((wchar_t)0);
+}
+
+int main()
+{
+    wstring inString = L"abhcdeabcfgdabcdlfe";
+
+    wcout << L"First unique character in " << inString.c_str() << L": " << FindFirstUnique(inString) << endl;
+    
+    return 0;
+}
