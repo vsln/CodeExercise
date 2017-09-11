@@ -71,16 +71,14 @@ void TreeToList(PNode Root, PNode *pHead, PNode *pTail)
     }
     TreeToList(Root->Left, pHead, pTail);
     Root->Left = *pTail;
-    if (*pTail == nullptr)
-    {
-        if (*pHead == nullptr)
-        {
-            *pHead = Root;
-        }
-    }
-    else
+    // Update pHead only once - if both pHead and pTail are NULL
+    if (*pTail != nullptr)
     {
         (*pTail)->Right = Root;
+    }
+    else if (*pHead == nullptr)
+    {
+        *pHead = Root;
     }
     *pTail = Root;
 
