@@ -1,0 +1,123 @@
+// TreeToDblList.cpp : Defines the entry point for the console application.
+//
+
+#include <iostream>
+#include <string>
+#include <queue>
+
+using namespace std;
+
+typedef struct _Node {
+    char            Value;
+    struct _Node*   Left;
+    struct _Node*   Right;
+} Node, *PNode;
+
+int TreeHeight(PNode Root)
+{
+    if (Root == nullptr)
+    {
+        return 0;
+    }
+    int leftHeight = TreeHeight(Root->Left);
+    int rightHeight = TreeHeight(Root->Right);
+    return (leftHeight > rightHeight) ? (1 + leftHeight) : (1 + rightHeight);
+}
+
+void PrintList(PNode Head)
+{
+    PNode currNode = Head;
+    cout << " <-> ";
+    while (currNode != nullptr)
+    {
+        cout << currNode->Value << " <-> ";
+        currNode = currNode->Right;
+    }
+    cout << endl;
+}
+
+PNode CreateNode(char Value)
+{
+    PNode newNode = new Node;
+    if (newNode == nullptr)
+    {
+        return newNode;
+    }
+    newNode->Left = nullptr;
+    newNode->Right = nullptr;
+    newNode->Value = Value;
+    return newNode;
+}
+
+/************************************************************************************
+ * Converts a balanced Binary Tree to a Doubly Linked List
+ *
+ * Takes the Root node and two pointer references for Head and Tail
+ * The Head node is updated if it is NULL, this would be the head
+ * of the Linked List
+ * The Tail node is maintained as the previous pointer. Update this for 
+ * every element seen in the tree. Eventually this will end up being
+ * the Tail pointer
+ * 
+ * If it has to be a circular doubly linked list, we could use the tail
+ * pointer to link the head's Right and make the Tail's Left point to Head
+ * 
+ * The return value exists solely for updating the Head pointer
+*************************************************************************************/
+void TreeToList(PNode Root, PNode *pHead, PNode *pTail)
+{
+    if (Root == nullptr)
+    {
+        return;
+    }
+    TreeToList(Root->Left, pHead, pTail);
+    Root->Left = *pTail;
+    if (*pTail == nullptr)
+    {
+        if (*pHead == nullptr)
+        {
+            *pHead = Root;
+        }
+    }
+    else
+    {
+        (*pTail)->Right = Root;
+    }
+    *pTail = Root;
+
+    TreeToList(Root->Right, pHead, pTail);
+    return;
+}
+
+int main()
+{
+    // 
+    //                   a
+    //          b                    c
+    //     d        e           f         g
+    // h                                      i
+    // 
+    PNode Root = CreateNode('a');
+    Root->Left = CreateNode('b');
+    Root->Right = CreateNode('c');
+    Root->Left->Left = CreateNode('d');
+    Root->Left->Right = CreateNode('e');
+    Root->Right->Left = CreateNode('f');
+    Root->Right->Right = CreateNode('g');
+    Root->Left->Left->Left = CreateNode('h');
+    Root->Right->Right->Right = CreateNode('i');
+
+    PNode Head = nullptr;
+    PNode Tail = nullptr;
+    TreeToList(Root, &Head, &Tail);
+#ifdef CIRCULAR_LIST
+    Head->Left = Tail;
+    Tail->Right = Head;
+#endif
+
+    PrintList(Head);
+
+    cout << "\n Head: " << Head->Value << "; Tail: " << Tail->Value << endl;
+
+    return 0;
+}
