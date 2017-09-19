@@ -1,0 +1,92 @@
+// GroupAnagrams.cpp : Defines the entry point for the console application.
+//
+
+#include <iostream>
+#include <vector>
+#include <string>
+#include <unordered_map>
+#include <algorithm>
+
+using namespace std;
+
+void GroupAnagrams2(vector<string>& Input)
+{
+    unordered_map<string, vector<size_t>> anagrams;
+    size_t index = 0;
+    for (auto it = Input.begin(); it != Input.end(); ++it)
+    {
+        string sortedWord = *it;
+        sort(sortedWord.begin(), sortedWord.end());
+        auto found = anagrams.find(sortedWord);
+        if (found != anagrams.end())
+        {
+            // Found the word
+            found->second.push_back(index);
+        }
+        else
+        {
+            vector<size_t> newVec;
+            newVec.push_back(index);
+            anagrams.insert({ sortedWord, newVec });
+        }
+        index++;
+    }
+
+    for (auto it = anagrams.begin(); it != anagrams.end(); ++it)
+    {
+        vector<size_t> indices = it->second;
+        for (auto vit = indices.begin(); vit != indices.end(); ++vit)
+        {
+            cout << Input[*vit] << " ";
+        }
+        cout << endl;
+    }
+}
+
+void GroupAnagrams(vector<string>& Input)
+{
+    vector<vector<size_t>> anagramIndices;
+    unordered_map<string, size_t> anagrams;
+    size_t index = 0;
+    for (auto it = Input.begin(); it != Input.end(); ++it)
+    {
+        string sortedWord = *it;
+        sort(sortedWord.begin(), sortedWord.end());
+        auto found = anagrams.find(sortedWord);
+        if (found != anagrams.end())
+        {
+            // Found word
+            anagramIndices.at(found->second).push_back(index);
+        }
+        else
+        {
+            // Add to map and create new vector
+            anagrams.insert({sortedWord, index});
+            vector<size_t> newIndex;
+            newIndex.push_back(index);
+            anagramIndices.push_back(newIndex);
+            //anagramIndices.at(index).push_back(index); // Since this is teh first time
+        }
+        index++;
+    }
+    for (auto it = anagramIndices.begin(); it != anagramIndices.end(); ++it)
+    {
+        for (auto it2 = it->begin(); it2 != it->end(); ++it2)
+        {
+            cout << Input[*it2] << " ";
+        }
+        cout << endl;
+    }
+}
+
+int main()
+{
+    vector<string> input = { "tab", "bat", "cat", "bait", "cant", "act" };
+
+    //GroupAnagrams(input);
+
+    GroupAnagrams2(input);
+
+    return 0;
+}
+
