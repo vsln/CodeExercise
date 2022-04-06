@@ -33,7 +33,7 @@ public class MedianOfSortedArrays {
         }
     }
 
-    private int[] mergeArraysInline(final int[] nums1, final int[] nums2) {
+    private int[] mergeArraysInlineSlow(final int[] nums1, final int[] nums2) {
         final int len1 = nums1.length;
         final int len2 = nums2.length;
         final int medianLowIndex = (len1+len2)/2;
@@ -64,6 +64,36 @@ public class MedianOfSortedArrays {
                 (i == len1 || nums1[i] > mergedArray[k]) && // Exhausted first array or least number is greater than median
                 (j == len2 || nums2[j] > mergedArray[k])) { // Exhausted second array or least number is greater than median
                 break;
+            }
+        }
+
+        return mergedArray;
+    }
+    
+    private int[] mergeArraysInline(final int[] nums1, final int[] nums2) {
+        final int len1 = nums1.length;
+        final int len2 = nums2.length;
+        final int medianLowIndex = (len1+len2)/2;
+        int[] mergedArray = new int[medianLowIndex + 2];
+
+        int i = 0;
+        int j = 0;
+        for (int k = 0; k < (medianLowIndex + 2); k++) {
+            if ((i > len1 - 1) && (j > len2 - 1)) {
+                return mergedArray;
+            }
+            if (i > len1 - 1) {
+                mergedArray[k] = nums2[j];
+                j++;
+            } else if (j > len2 - 1) {
+                mergedArray[k] = nums1[i];
+                i++;
+            } else if (nums1[i] < nums2[j]) {
+                mergedArray[k] = nums1[i];
+                i++;
+            } else {
+                mergedArray[k] = nums2[j];
+                j++;
             }
         }
 
